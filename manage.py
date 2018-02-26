@@ -1,23 +1,51 @@
+#!/usr/bin/env python
+
 import tornado
 from tornado.options import parse_command_line, options, define
 import tornado.web
 
 from vimcanvas.urls import url_config
+from vimcanvas import app
+
 import uuid
+import sys
 
 define("secret_key", default=uuid.uuid5)
 
-def make_app():
-    return tornado.web.Application(url_config,
-        cookie_secret=options.secret_key,
-        xsrf_cookies=True,
-    )
+class CommandManager(object):
+    """
+    Class for handling a set of commands
+    """
+    
+    def __init__(self, app=None):
+        self.app = app
+        self._commands = dict()
 
-def main():
+    def command(self, func):
+        """
+        Decorator for creating a command
+        """
+        self._commands[func.__name__] = func
+
+    def set_default_command(self, name):
+        self.default_command = name
+
+    def run(self):
+        if sys.argv[1]:
+            self._commands[sys.argv[1]]()
+        else:
+            self._commands[self.default_command]()
+
+manager = CommandManager(app)
+
+@manager.command
+def runserver():
     parse_command_line()
-    app = make_app()
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()
+
+def main():
+    manager.run()
 
 if __name__ == "__main__":
     main()
