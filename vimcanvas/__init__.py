@@ -4,6 +4,7 @@ import tornado
 from tornado.options import define, options
 
 from .urls import url_config
+from .database import init_db
 
 define("secret_key", default=uuid.uuid5)
 
@@ -14,3 +15,4 @@ def make_app():
     )
 
 app = make_app()
+init_db()
