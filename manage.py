@@ -6,6 +6,7 @@ import tornado.web
 
 from vimcanvas.urls import url_config
 from vimcanvas import app
+from vimcanvas.database import engine
 
 import uuid
 import sys
@@ -37,6 +38,12 @@ class CommandManager(object):
             self._commands[self.default_command]()
 
 manager = CommandManager(app)
+
+@manager.command
+def initdb():
+    #import pdb; pdb.set_trace()
+    with open("schema.sql") as f, engine.connect() as con:
+        con.execute(f.read())
 
 @manager.command
 def runserver():

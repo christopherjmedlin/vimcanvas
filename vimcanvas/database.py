@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from tornado.options import define, options
 
-define("mysql_uri", default="mysql://test:password@localhost")
+define("mysql_uri", default="mysql://test:password@localhost/vimcanvas")
 
 engine = create_engine(options.mysql_uri)
 db_session = scoped_session(sessionmaker(autocommit=False,
