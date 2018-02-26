@@ -1,11 +1,17 @@
 import tornado
+from tornado.web import RequestHandler
+from tornado.options import options
 
-class GameWebSocket(tornado.websocket.WebSocketHandler):
-    def open(self):
-        print("opened")
-    
-    def on_message(self, message):
-        self.write_message("asdf")
-    
-    def on_close(self):
-        print("Closed")
+import pymongo
+
+class BaseRequestHandler(tornado.web.RequestHandler):
+
+    @property
+    def db(self):
+        if not hasattr(self, '_db'):
+            self._db = pymongo.MongoClient(options.mongo_uri)
+        return self._db
+
+class CanvasHandler(BaseRequestHandler):
+    def get(self):
+        
