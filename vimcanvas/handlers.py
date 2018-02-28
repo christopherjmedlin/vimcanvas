@@ -3,9 +3,9 @@ from tornado.web import RequestHandler
 from tornado.options import options
 
 import pymongo
-import json
+from bson import json_util
 
-class BaseRequestHandler(tornado.web.RequestHandler):
+class DatabaseMixin(object):
 
     @property
     def db(self):
@@ -13,12 +13,12 @@ class BaseRequestHandler(tornado.web.RequestHandler):
             self._mongo = pymongo.MongoClient(options.mongo_uri)
         return self._mongo.db
 
-class CanvasHandler(BaseRequestHandler):
+class CanvasHandler(RequestHandler, DatabaseMixin):
     def get(self):
-        if self.get_cookie("user_id"):
+        if (self.get_cookie("user_id")):
             query = {"$or": [{"owner": self.get_cookie("user_id")},
-                             {"active": True}]
+                             {"active": True}]}
         else:
             query = {"active": True}
 
-        self.write(json.loads(self.db.canvases.find(query)))
+        self.write(json_util.dumps(self.db.canvases.find(query)))
