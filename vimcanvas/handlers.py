@@ -50,4 +50,10 @@ class CanvasHandler(RequestHandler, HandlerMixin):
 class UserCreateHandler(RequestHandler, HandlerMixin):
     def post(self):
         data = json.loads(self.request.body)
+        try:
+            data = {
+                "username": data["username"]
+            }
+        except KeyError:
+            self.json_error("One of the following fields are missing: title, owner")
         
