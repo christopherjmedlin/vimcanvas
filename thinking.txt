@@ -1,0 +1,76 @@
+User types "ls"
+Client requests /api/v1/canvases/
+Server retrieves documents from MongoDB
+Server returns documents
+Client parses documents and displays names
+User types "touch canvas.vim"
+
+Client posts to /api/v1/canvases:
+{
+	title: "canvas.vim"
+}
+(if the user were logged in it would also send the owner id)
+
+If our user weren't anonymous, the server inserts document to MongoDB with added "active" and "alteredCharacters" fields
+Server inserts document into global buffer
+Server returns the inserted document with it's ID
+Client app switches to /<id> route (might use react-router, might not)
+
+Normally the client would request /api/v1/canvases/<id> to get the pre-existing data during the join process, 
+but that isn't needed here because the game was just created and has no pre-existing data.
+
+Client opens websocket at /api/v1/channel/<id>
+Server adds client to a group with the name "canvas-<id>"
+Server updates global buffer.
+
+the server sends the following JSON to the group:
+{
+	event: {
+		type: "join",
+		data: {
+			username: "Anonymous"
+		}
+	}	
+}
+
+Client receives JSON, adds username to player list
+User presses "l"
+Client sends "move left" to websocket
+Server updates global buffer
+
+Server sends the following JSON to group:
+{
+	event: {
+		type: "move",
+		data: {
+			x: <the new coordinates in the global buffer>,
+			y: <the new coordinates in the global buffer>
+		}
+	}
+}
+
+Clients highlight char at coordinates
+User presses "i" and then types "@"
+Client sends "char <user x> <user y> @"
+Server updates global buffer
+
+Server sends the following JSON to group:
+{
+	event: {
+		type: "char",
+		data : {
+			x: <char coordinates>,
+			y: <char coordinates>,
+			char: @
+		}
+	}
+}
+
+User presses "ESC" and ":" and types "color #FFFFFF"
+Client sends "char <user x> <user y> #FFFFFF"
+Server updates global buffer
+
+Server sends the following JSON to group:
+{
+
+}
