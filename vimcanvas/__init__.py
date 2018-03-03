@@ -17,5 +17,4 @@ def make_app():
         xsrf_cookies=True,
     )
 
-global_buffers = []
 app = make_app()
