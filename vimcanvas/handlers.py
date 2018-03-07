@@ -4,6 +4,7 @@ from tornado.options import options
 
 import pymongo
 from bson import json_util, ObjectId
+from bson.errors import InvalidId
 
 import json
 import hashlib
@@ -26,10 +27,14 @@ class HandlerMixin(object):
 
     def json_error(self, message, status=400):
         self.set_status(status)
-        self.write('{"error": "{}"}'.format(message))
+        self.write({"error": message})
 
 
 class CanvasHandler(RequestHandler, HandlerMixin):
+    def check_origin(self, origin):
+        import pdb; pdb.set_trace()
+        return True
+
     def get(self):
         canvases = []
 
@@ -50,27 +55,38 @@ class CanvasHandler(RequestHandler, HandlerMixin):
         for canvas in self.cache.get_all("canvases"):
             canvases.append({
                 "_id": str(canvas._id),
-                "name": canvas.title,
-                "alteredChars": canvas.altered_chars
+                "name": canvas.title
             })
                 
         self.write(json.dumps(canvases))
 
     def post(self):
-        import pdb; pdb.set_trace()
         data = json.loads(self.request.body)
 
-        if len(data["title"]) > 50:
-            self.json_error("Title must be shorter than 50 characters.")
         try:
-            self.cache.insert("canvases", Canvas(data["title"], ObjectId()))
+            if len(data["title"]) > 50:
+                self.json_error("Title must be shorter than 50 characters.")
+            else:
+                self.cache.insert("canvases", Canvas(data["title"], ObjectId()))
         except KeyError:
             self.json_error("No title was given.")
 
 
 class CanvasRetrieveHandler(RequestHandler, HandlerMixin):
     def get(self, slug):
-        self.write(self.cache.get("canvases", ObjectId(slug)))
+        canvas = None
+        try:
+            canvas = self.cache.get("canvases", ObjectId(slug))
+        except InvalidId:
+            pass
+        if canvas:
+            self.write({
+                    "_id": str(canvas._id),
+                    "name": canvas.title,
+                    "alteredChars": canvas.altered_chars
+            })
+        else:
+            self.json_error("Canvas not found.", 404)
 
 
 class UserCreateHandler(RequestHandler, HandlerMixin):

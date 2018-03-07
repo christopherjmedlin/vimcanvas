@@ -19,7 +19,7 @@ def make_app():
 
     return tornado.web.Application(url_config,
         cookie_secret=options.secret_key,
-        xsrf_cookies=True,
+        xsrf_cookies=False
     )
 
 app = make_app()

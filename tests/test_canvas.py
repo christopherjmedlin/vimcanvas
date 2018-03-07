@@ -6,13 +6,6 @@ from vimcanvas.cache import Canvas
 def canvas():
     return Canvas("test", ObjectId())
 
-def test_connect(canvas):
-    with pytest.raises(Exception) as e:
-        #import pdb; pdb.set_trace()
-        canvas.connect(1)
-    assert str(e.value) == "Handler must be a CanvasWebSocketHandler."
-    assert 1 not in canvas.clients
-
 @pytest.mark.parametrize("char,color,x,y,expected_exception", [
     ('@', 'ffffff', 50, 50, 'None'),
     ('a', 'ffffff', 50, 50, 'None'),
@@ -31,6 +24,13 @@ def test_change_char(canvas, char, color, x, y, expected_exception):
     except ValueError as e:
         exception = e
     assert str(exception) == expected_exception
+
+def test_connect(canvas):
+    with pytest.raises(Exception) as e:
+        #import pdb; pdb.set_trace()
+        canvas.connect(1)
+    assert str(e.value) == "Handler must be a CanvasWebSocketHandler."
+    assert 1 not in canvas.clients
 
 def test_change_char_same_coords(canvas):
     canvas.change_char('#', '00ff00', 50, 50)
