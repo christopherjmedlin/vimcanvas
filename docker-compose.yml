@@ -1,0 +1,10 @@
+version: '3.5'
+
+services:
+  web:
+    build: .
+    command: python3.6 manage.py runserver
+    volumes:
+      - .:/opt/vimcanvas
+    ports:
+      - "443:443"

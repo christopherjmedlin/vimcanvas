@@ -1,6 +1,5 @@
 import uuid
 
-import pymongo
 from bson import ObjectId
 
 import tornado

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import tornado
 from tornado.options import parse_command_line, options, define
@@ -11,7 +11,12 @@ import uuid
 import sys
 
 define("secret_key", default=uuid.uuid5)
-define("port", default=8888)
+define("env", default="dev")
+
+if options.env == "prod":
+    define("port", default=443)
+else:
+    define("port", default=8888)
 
 class CommandManager(object):
     """
@@ -38,6 +43,7 @@ class CommandManager(object):
             self._commands[self.default_command]()
 
 manager = CommandManager(app)
+manager.set_default_command("runserver")
 
 @manager.command
 def runserver():
