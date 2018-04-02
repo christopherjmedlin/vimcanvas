@@ -9,6 +9,7 @@ from vimcanvas import app
 
 import uuid
 import sys
+import os
 
 define("secret_key", default=uuid.uuid5)
 define("env", default="dev")
@@ -43,12 +44,32 @@ class CommandManager(object):
             self._commands[self.default_command]()
 
 manager = CommandManager(app)
-manager.set_default_command("runserver")
+manager.set_default_command("devserver")
 
 @manager.command
-def runserver():
+def devserver():
     parse_command_line()
     app.listen(options.port)
+    tornado.ioloop.IOLoop.current().start()
+
+@manager.command
+def run():
+    parse_command_line()
+    app.listen(80)
+    https_server = tornado.httpserver.HTTPServer(
+        app,
+        ssl_options = {
+            "certfile": os.getenv(
+                "SSL_CERT_PATH",
+                default=os.path.join("/etc/letsencrypt/live/vimcanvas.christophermedlin.me/", "cert.pem")
+            ),
+            "keyfile": os.getenv(
+                "SSL_KEY_PATH",
+                default=os.path.join("/etc/letsencrypt/live/vimcanvas.christophermedlin.me/", "key.pem")
+            )
+        }
+    )
+    https_server.listen(443)
     tornado.ioloop.IOLoop.current().start()
 
 def main():
