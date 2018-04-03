@@ -30,7 +30,14 @@ class HandlerMixin(object):
         self.write({"error": message})
 
 
-class CanvasHandler(RequestHandler, HandlerMixin):
+class BaseHandler(RequestHandler):
+    def prepare(self):
+        if options.env == 'prod' and self.request.protocol != 'https' and \
+           self.request.protocol != 'wss':
+            self.redirect('https://' + self.request.host + self.request.path, permanent=True)
+
+
+class CanvasHandler(BaseHandler, HandlerMixin):
     def check_origin(self, origin):
         import pdb; pdb.set_trace()
         return True
@@ -72,7 +79,7 @@ class CanvasHandler(RequestHandler, HandlerMixin):
             self.json_error("No title was given.")
 
 
-class CanvasRetrieveHandler(RequestHandler, HandlerMixin):
+class CanvasRetrieveHandler(BaseHandler, HandlerMixin):
     def get(self, slug):
         canvas = None
         try:
@@ -89,7 +96,7 @@ class CanvasRetrieveHandler(RequestHandler, HandlerMixin):
             self.json_error("Canvas not found.", 404)
 
 
-class UserCreateHandler(RequestHandler, HandlerMixin):
+class UserCreateHandler(BaseHandler, HandlerMixin):
     def post(self):
         data = json.loads(self.request.body)
         try:
