@@ -32,7 +32,7 @@ def app():
 @pytest.mark.gen_test
 def test_canvas_list(http_client, base_url):
     populate()
-    response = yield http_client.fetch(base_url + "/api/v1/canvases")
+    response = yield http_client.fetch(base_url + "/v1/canvases")
     assert response.code == 200
     response = json.loads(response.body)
     assert len(response) == 3
@@ -44,7 +44,7 @@ def test_canvas_list(http_client, base_url):
     ({"title": TITLE_TOO_LONG}, 400, "Title must be shorter than 50 characters.")
 ])
 def test_canvas_post(http_client, base_url, post, expected_code, expected_error):
-    request = HTTPRequest(base_url + "/api/v1/canvases",
+    request = HTTPRequest(base_url + "/v1/canvases",
         method="POST",
         body=json.dumps(post)
     )
@@ -59,8 +59,8 @@ def test_canvas_post(http_client, base_url, post, expected_code, expected_error)
 @pytest.mark.gen_test
 def test_canvas_retrieve(http_client, base_url):
     populate()
-    response = yield http_client.fetch(base_url + "/api/v1/canvases/5a9d4f10575e225241d8ebc8")
+    response = yield http_client.fetch(base_url + "/v1/canvases/5a9d4f10575e225241d8ebc8")
     assert json.loads(response.body)["name"] == 'Test1'
     with pytest.raises(HTTPError) as err:
-        yield http_client.fetch(base_url + "/api/v1/canvases/nonexistantobject")
+        yield http_client.fetch(base_url + "/v1/canvases/nonexistantobject")
     assert "404" in str(err.value)
