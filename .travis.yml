@@ -16,7 +16,7 @@ install:
 - pip install -r test-requirements.txt
 
 script: 
-- coverage run --source='.' pytest -sv
+- py.test --cov=. tests/
 - docker build -t quay.io/christopherjmedlin/vimcanvas:latest .
 
 after_success: coveralls
