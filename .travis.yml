@@ -3,6 +3,9 @@ language: python
 python:
 - "3.6"
 
+services:
+- docker
+
 cache: pip
 
 before_install:
@@ -13,29 +16,13 @@ install:
 - pip install -r test-requirements.txt
 
 script: 
-  - coverage run --source='.' pytest -sv
-  - zip -r latest *
-  - mkdir -p cd_upload
-  - mv latest.zip cd_upload/latest.zip
+- coverage run --source='.' pytest -sv
+- docker build -t quay.io/christopherjmedlin/vimcanvas:latest .
 
 after_success: coveralls
 
 deploy:
-  - provider: s3
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key: $AWS_SECRET_KEY
-    local_dir: cd_upload
-    skip_cleanup: true
-    on:
-      repo: christopherjmedlin/vimcanvas
-    bucket: vimcanvas-code
-    region: us-west-2
-  - provider: codedeploy
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key: $AWS_SECRET_KEY
-    bucket: vimcanvas-code
-    key: latest.zip
-    bundle_type: zip
-    application: vimcanvas
-    deployment_group: vimcanvas
-    region: us-west-2
+  provider: script
+  script: bash docker_push.sh
+  on:
+    branch: master
