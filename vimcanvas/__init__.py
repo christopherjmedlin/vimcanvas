@@ -7,6 +7,13 @@ from tornado.options import define, options
 
 define("secret_key", default=uuid.uuid5)
 define("mongo_uri", default="mongodb://localhost:27017/test")
+define("secret_key", default=uuid.uuid5)
+define("env", default="dev")
+
+if options.env == "prod":
+    define("port", default=443)
+else:
+    define("port", default=8888)
 
 CACHE_MODELS = [
     "canvases"
