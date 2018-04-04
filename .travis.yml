@@ -20,9 +20,3 @@ script:
 - docker build -t quay.io/christopherjmedlin/vimcanvas:latest .
 
 after_success: coveralls
-
-deploy:
-  provider: script
-  script: bash docker_push.sh
-  on:
-    branch: master
