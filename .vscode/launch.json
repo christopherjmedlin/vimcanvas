@@ -64,9 +64,7 @@
             "program": "${workspaceFolder}/manage.py",
             "cwd": "${workspaceFolder}",
             "args": [
-                "runserver",
-                "--noreload",
-                "--nothreading"
+                "devserver"
             ],
             "env": {},
             "envFile": "${workspaceFolder}/.env",
