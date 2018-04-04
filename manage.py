@@ -11,14 +11,6 @@ import uuid
 import sys
 import os
 
-define("secret_key", default=uuid.uuid5)
-define("env", default="dev")
-
-if options.env == "prod":
-    define("port", default=443)
-else:
-    define("port", default=8888)
-
 class CommandManager(object):
     """
     Manages a set of commands
