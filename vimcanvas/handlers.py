@@ -35,7 +35,7 @@ class BaseHandler(RequestHandler):
         if options.env == 'prod' and self.request.protocol != 'https' and \
            self.request.protocol != 'wss':
             self.redirect('https://' + self.request.host + self.request.path, permanent=True)
-        self.add_header("Access-Control-Allow-Origin", "*.christophermedlin.me")
+        self.add_header("Access-Control-Allow-Origin", "*")
 
 
 class CanvasHandler(BaseHandler, HandlerMixin):
