@@ -72,7 +72,7 @@ class Canvas(object):
     def connect(self, handler):
         if type(handler).__name__ != "CanvasWebSocketHandler":
             raise Exception("Handler must be a CanvasWebSocketHandler.")
-        self.clients += handler
+        self.clients.append(handler)
 
     def write_message(self, message):
         for handler in self.clients:
