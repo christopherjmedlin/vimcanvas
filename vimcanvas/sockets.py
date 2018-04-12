@@ -5,6 +5,7 @@ import random
 
 from vimcanvas import cache
 from vimcanvas.handlers import HandlerMixin
+from bson import ObjectId
 
 class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
 
@@ -12,7 +13,7 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
     def canvas(self):
         if not hasattr(self, '_canvas'):
             canvas_id = self.get_argument("id")
-            self._canvas = self.cache.get("canvases", canvas_id)
+            self._canvas = self.cache.get("canvases", ObjectId(canvas_id))
         return self._canvas
 
     def open(self):
