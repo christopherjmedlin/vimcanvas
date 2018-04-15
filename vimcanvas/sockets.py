@@ -17,12 +17,14 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
         return self._canvas
 
     def open(self):
+        self.id = ObjectId()
         self.canvas.connect(self)
         self.canvas.write_message({
             "event": {
                 "type": "join",
                 "data": {
-                    "username": "Anonymous"
+                    "username": "Anonymous",
+                    "id": str(self.id)
                 }
             }	
         })
@@ -56,7 +58,8 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
                 "type": "move",
                 "data": {
                     "x": self.x,
-                    "y": self.y
+                    "y": self.y,
+                    "id": str(self.id)
                 }
             }
         })
