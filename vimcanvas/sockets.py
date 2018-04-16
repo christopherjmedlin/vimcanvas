@@ -43,12 +43,40 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
         args = command[1:]
         command = command[0]
 
+        args[0] = int(args[0])
+        args[1] = int(args[1])
+
         if command == 'move':
             self._move(args)
         elif command == 'char':
-            self.canvas.change_char(args[2], None, args[0],  args[1])
+            self._change_char(args[2], args[0],  args[1])
         elif command == 'color':
-            self.canvas.change_char(None, args[2], args[0], args[1])
+            self._change_color(args[2], args[0], args[1])
+
+    def _change_char(self, char, x, y):
+        self.canvas.change_char(char, char, x, y)
+        self.canvas.write_message({
+            "event": {
+                "type": "char",
+                "data": {
+                    "x": x,
+                    "y": y,
+                    "char": char
+                }
+            }
+        })
+
+    def _change_color(self, color, x, y):
+        self.canvas.write_message({
+            "event": {
+                "type": "color",
+                "data": {
+                    "x": x,
+                    "y": y,
+                    "color": color
+                }
+            }
+        })
 
     def _move(self, args):
         self.x = args[0]
