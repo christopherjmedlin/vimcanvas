@@ -2,8 +2,8 @@ version: '2'
 
 services:
   web:
+    image: quay.io/christopherjmedlin/vimcanvas
     env_file: .env
-    build: .
     command: python3.6 manage.py run
     volumes:
       - .:/opt/vimcanvas
