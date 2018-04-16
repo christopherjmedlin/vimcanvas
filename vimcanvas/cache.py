@@ -74,10 +74,13 @@ class Canvas(object):
             raise Exception("Handler must be a CanvasWebSocketHandler.")
         self.clients.append(handler)
 
+    def close(self, handler):
+        self.clients.remove(handler)
+
     def write_message(self, message):
         for handler in self.clients:
             handler.write_message(message)
-
+                
     def save(self, db):
         db.canvases.update_one({"_id": ObjectId(self._id)},
                                {"altered_char": self.altered_chars})

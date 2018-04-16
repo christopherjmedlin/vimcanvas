@@ -35,6 +35,7 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
         self._interpret_command(message)
     
     def on_close(self):
+        self.canvas.close(self)
         print("Closed")
 
     def _interpret_command(self, command):
