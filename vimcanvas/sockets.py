@@ -52,7 +52,7 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
             self._change_color(args[2], args[0], args[1])
 
     def _change_char(self, char, x, y):
-        self.canvas.change_char(char, char, x, y)
+        self.canvas.change_char(char, None, x, y)
         self.canvas.write_message({
             "event": {
                 "type": "char",
@@ -65,6 +65,7 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
         })
 
     def _change_color(self, color, x, y):
+        self.canvas.change_char(None, color, x, y)
         self.canvas.write_message({
             "event": {
                 "type": "color",
