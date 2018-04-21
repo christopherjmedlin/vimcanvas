@@ -79,14 +79,15 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
     def _move(self, args):
         self.x = args[0]
         self.y = args[1]
-            
-        self.canvas.write_message({
-            "event": {
-                "type": "move",
-                "data": {
-                    "x": self.x,
-                    "y": self.y,
-                    "id": str(self.id)
+
+        if self.x <= 100 and self.y <= 100:
+            self.canvas.write_message({
+                "event": {
+                    "type": "move",
+                    "data": {
+                        "x": self.x,
+                        "y": self.y,
+                        "id": str(self.id)
+                    }
                 }
-            }
-        })
+            })
