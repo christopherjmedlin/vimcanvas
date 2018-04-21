@@ -16,6 +16,9 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
             self._canvas = self.cache.get("canvases", ObjectId(canvas_id))
         return self._canvas
 
+    def check_origin(self, origin):
+        return True
+
     def open(self):
         self.id = ObjectId()
         self.canvas.connect(self)
