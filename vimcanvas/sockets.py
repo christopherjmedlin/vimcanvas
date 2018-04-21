@@ -28,8 +28,6 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
                 }
             }	
         })
-        self.x = random.randrange(0, 500)
-        self.y = random.randrange(0, 500)
     
     def on_message(self, message):
         self._interpret_command(message)
