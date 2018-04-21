@@ -40,7 +40,6 @@ class BaseHandler(RequestHandler):
 
 class CanvasHandler(BaseHandler, HandlerMixin):
     def check_origin(self, origin):
-        import pdb; pdb.set_trace()
         return True
 
     def get(self):
