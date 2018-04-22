@@ -66,7 +66,7 @@ class Canvas(object):
         if not altered_char["char"]:
             altered_char["char"] = '#'
         if not altered_char["color"]:
-            altered_char["color"] = '00ff00'
+            altered_char["color"] = '#00FF00'
         self.altered_chars.append(altered_char)
 
     def connect(self, handler):
