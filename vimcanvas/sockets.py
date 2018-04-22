@@ -30,7 +30,7 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
                     "id": str(self.id)
                 }
             }	
-        })
+        }, self)
     
     def on_message(self, message):
         self._interpret_command(message)
@@ -94,4 +94,4 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
                         "id": str(self.id)
                     }
                 }
-            })
+            }, self)

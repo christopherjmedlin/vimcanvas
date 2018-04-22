@@ -77,9 +77,12 @@ class Canvas(object):
     def close(self, handler):
         self.clients.remove(handler)
 
-    def write_message(self, message):
+    # firing_handler is incase i want to exclude the handler that sent the 
+    # message and prevent echo. it can be left as None if desired
+    def write_message(self, message, firing_handler=None):
         for handler in self.clients:
-            handler.write_message(message)
+            if handler != firing_handler:
+                handler.write_message(message)
                 
     def save(self, db):
         db.canvases.update_one({"_id": ObjectId(self._id)},
