@@ -47,7 +47,7 @@ class Canvas(object):
         self.altered_chars = []
         self.clients = []
 
-    def change_char(self, char, color, x, y):
+    def change_char(self, char, color, x, y, width=1, length=1):
         if y > 500 or x > 500:
             raise ValueError("Character coordinates out of bounds.")
         # check if there is already an altered char at coordinates

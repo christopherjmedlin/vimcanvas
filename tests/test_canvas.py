@@ -6,16 +6,16 @@ from vimcanvas.cache import Canvas
 def canvas():
     return Canvas("test", ObjectId())
 
-@pytest.mark.parametrize("char,color,x,y,expected_exception", [
-    ('@', 'ffffff', 50, 50, 'None'),
-    ('a', 'ffffff', 50, 50, 'None'),
-    ('5', '000000', 100, 100, 'None'),
-    ('#', '00ff00', 550, 550, 'Character coordinates out of bounds.')
+@pytest.mark.parametrize("char,color,x,y,width,height,expected_exception", [
+    ('@', 'ffffff', 50, 50, 1, 1, 'None'),
+    ('a', 'ffffff', 50, 50, 1, 1, 'None'),
+    ('5', '000000', 100, 100, 1, 1, 'None'),
+    ('#', '00ff00', 550, 550, 1, 1, 'Character coordinates out of bounds.')
 ])
-def test_change_char(canvas, char, color, x, y, expected_exception):
+def test_change_char(canvas, char, color, x, y, width, height, expected_exception):
     exception = None
     try:
-        canvas.change_char(char, color, x, y)
+        canvas.change_char(char, color, x, y, width, height)
         assert {
             "char": char,
             "color": color,
@@ -24,6 +24,10 @@ def test_change_char(canvas, char, color, x, y, expected_exception):
     except ValueError as e:
         exception = e
     assert str(exception) == expected_exception
+
+def test_change_char_width_height(canvas):
+    canvas.change_char('#', 'ffffff', 5, 5, 10, 10)
+    assert len(canvas.altered_chars) == 100
 
 def test_connect(canvas):
     with pytest.raises(Exception) as e:
