@@ -45,20 +45,6 @@ class CanvasHandler(BaseHandler, HandlerMixin):
     def get(self):
         canvases = []
 
-        # query = {"$or": [
-        #     {"owner": ObjectId(self.get_cookie("user_id"))},
-        #     {"active": False}
-        # ]}
-        #
-        # inactive_canvases = self.db.find(query)
-        #
-        # if len(inactive_canvases):
-        #     for canvas in inactive_canvases:
-        #         canvases += {
-        #             "_id": canvas._id,
-        #             "name": canvas.name
-        #         }
-
         for canvas in self.cache.get_all("canvases"):
             canvases.append({
                 "_id": str(canvas._id),
@@ -70,6 +56,10 @@ class CanvasHandler(BaseHandler, HandlerMixin):
     def post(self):
         data = json.loads(self.request.body)
 
+        for canvas in self.cache.get_all("canvases"):
+            if data["title"] == canvas.title:
+                self.json_error("A canvas with that name already exists.")
+                
         try:
             if len(data["title"]) > 50:
                 self.json_error("Title must be shorter than 50 characters.")

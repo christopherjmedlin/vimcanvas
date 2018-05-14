@@ -41,7 +41,7 @@ def test_canvas_list(http_client, base_url):
 @pytest.mark.parametrize("post,expected_code,expected_error", [
     ({"title": "Test1"}, 200, "None"),
     ({}, 400, "No title was given."),
-    ({"title": TITLE_TOO_LONG}, 400, "Title must be shorter than 50 characters.")
+    ({"title": TITLE_TOO_LONG}, 400, "Title must be shorter than 50 characters."),
 ])
 def test_canvas_post(http_client, base_url, post, expected_code, expected_error):
     request = HTTPRequest(base_url + "/v1/canvases",
@@ -55,6 +55,18 @@ def test_canvas_post(http_client, base_url, post, expected_code, expected_error)
     else:
         response = yield http_client.fetch(request)
         assert response.code == expected_code
+
+@pytest.mark.gen_test
+def test_canvas_post_same_title(http_client, base_url):
+    request = HTTPRequest(base_url + "/v1/canvases",
+        method="POST",
+        body='{"title": "Test1"}'
+    )
+    response = yield http_client.fetch(request)
+    assert response.code == 200
+    with pytest.raises(HTTPError) as err:
+        yield http_client.fetch(request)
+    assert "400" in str(err.value)
 
 @pytest.mark.gen_test
 def test_canvas_retrieve(http_client, base_url):
