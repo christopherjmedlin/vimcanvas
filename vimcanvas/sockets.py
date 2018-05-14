@@ -37,6 +37,8 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
     
     def on_close(self):
         self.canvas.close(self)
+        if not len(self.canvas.clients):
+            self.cache.remove("canvases", self.canvas)
         print("Closed")
 
     def _interpret_command(self, command):

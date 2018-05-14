@@ -18,6 +18,10 @@ class Cache(object, metaclass=Singleton):
     def insert(self, model_name, obj):
         collection = self._get_collection(model_name)
         collection.append(obj)
+
+    def remove(self, model_name, obj):
+        collection = self._get_collection(model_name)
+        collection.remove(obj)
         
     def get_all(self, model_name):
             return self._get_collection(model_name)
