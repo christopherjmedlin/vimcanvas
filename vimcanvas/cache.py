@@ -44,30 +44,31 @@ class Canvas(object):
     def __init__(self, title, _id):
         self.title = title
         self._id = _id
-        self.altered_chars = []
+        self.chars = [[{"char": "_", "color": "00FF00"} for i in range(500)] for j in range(500)]
         self.clients = []
 
-    def change_char(self, char, color, x, y, width=1, length=1):
-        if y > 500 or x > 500:
-            raise ValueError("Character coordinates out of bounds.")
-        # check if there is already an altered char at coordinates
-        for altered_char in self.altered_chars:
-            if (altered_char["coords"] == (x, y)):
-                if char:
-                    altered_char["char"] = char
-                if color:
-                    altered_char["color"] = color
-                return
-        altered_char = {
-            "char": char,
-            "color": color,
-            "coords": (x, y)
-        }
-        if not altered_char["char"]:
-            altered_char["char"] = '#'
-        if not altered_char["color"]:
-            altered_char["color"] = '#00FF00'
-        self.altered_chars.append(altered_char)
+    def change_char(self, char, color, x, y, width=1, height=1):
+        try:
+            for i in range(y, y + height):
+                for j in range(x, x + width):
+                    if char:
+                        self.chars[i][j]["char"] = char
+                    if color:
+                        self.chars[i][j]["color"] = color
+        except IndexError:
+            raise ValueError('Character coordinates out of bounds.')
+
+    @property
+    def altered_chars(self):
+        altered_chars = []
+        for row_index, row in enumerate(self.chars):
+            for col_index, char in enumerate(row):
+                if char != {"char": "_", "color": "00FF00"}:
+                    copy = dict(char)
+                    copy["coords"] = (col_index, row_index)
+                    altered_chars.append(copy)
+        return altered_chars
+
 
     def connect(self, handler):
         if type(handler).__name__ != "CanvasWebSocketHandler":
@@ -86,4 +87,4 @@ class Canvas(object):
                 
     def save(self, db):
         db.canvases.update_one({"_id": ObjectId(self._id)},
-                               {"altered_char": self.altered_chars})
+                               {"altered_chars": self.altered_chars})
