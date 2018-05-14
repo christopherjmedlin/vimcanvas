@@ -47,16 +47,23 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
         args[0] = int(args[0])
         args[1] = int(args[1])
 
+        if len(args) == 5:
+            args[3] = int(args[3])
+            args[4] = int(args[4])
+        else:
+            args.append(1)
+            args.append(1)
+
         if command == 'move':
             self._move(args)
         elif command == 'char':
-            self._change_char(args[2], args[0],  args[1])
+            self._change_char(args[2], args[0],  args[1], args[3], args[4])
         elif command == 'color':
-            self._change_color(args[2], args[0], args[1])
+            self._change_color(args[2], args[0], args[1], args[3], args[4])
 
-    def _change_char(self, char, x, y):
-        self.canvas.change_char(char, None, x, y)
-        self.canvas.write_message({
+    def _change_char(self, char, x, y, width=1, height=1):
+        self.canvas.change_char(char, None, x, y, width, height)
+        message = {
             "event": {
                 "type": "char",
                 "data": {
@@ -65,11 +72,15 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
                     "char": char
                 }
             }
-        })
+        }
+        if width and height:
+            message["event"]["data"]["width"] = width
+            message["event"]["data"]["height"] = height
+        self.canvas.write_message(message)
 
-    def _change_color(self, color, x, y):
-        self.canvas.change_char(None, color, x, y)
-        self.canvas.write_message({
+    def _change_color(self, color, x, y, width=None, height=None):
+        self.canvas.change_char(None, color, x, y, width, height)
+        message = {
             "event": {
                 "type": "color",
                 "data": {
@@ -78,7 +89,11 @@ class CanvasWebSocketHandler(tornado.websocket.WebSocketHandler, HandlerMixin):
                     "color": color
                 }
             }
-        })
+        }
+        if width and height:
+            message["event"]["data"]["width"] = width
+            message["event"]["data"]["height"] = height
+        self.canvas.write_message(message)
 
     def _move(self, args):
         self.x = args[0]
